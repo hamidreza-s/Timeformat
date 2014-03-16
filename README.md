@@ -29,7 +29,8 @@ time.formatGregorian("y-m-d h:i:s");
 ```
 
 ### Options
-Timestamp has precedence over jalali and gregorian, and Jalali has precedence over gregorian.
+**timestamp** key has precedence over **jalali** and **gregorian**.
+And also **jalali** key has precedence over **gregorian**.
 
 ```javascript
 var options = {
