@@ -1,19 +1,30 @@
-<script src="./timeformat.js" type="text/javascript"></script>
-<script type="text/javascript">
+<html>
+<head>
+   <script src="./timeformat.js" type="text/javascript"></script>
+<head>
+<body>
+   <span id="target"></span>
+   <script type="text/javascript">
 
-   /* Initializing examples */
-   var time = new Timestamp();
-   var time = new Timestamp({timestamp: 1394961512});
-   var time = new Timestamp({timestamp: 1394961512136, miliseconds: true});
-   var time = new Timestamp({jalali: [1392, 12, 25, 12, 0, 0]});
-   var time = new timestamp({gregorian: [2014, 3, 16, 12, 0, 0]});
+      /* Initializing examples */
+      var time = new Timestamp({jalali: {
+         year: 1392, 
+         month: 12, 
+         day: 25, 
+         hours: 12, 
+         minutes: 0, 
+         seconds: 0
+      }});
 
-   /* updating examples */
-   time.fromTimestamp(1394961512)
-   time.fromJalali([1392, 12, 25, 12, 0, 0]);
-   time.fromGregorian([2014, 3, 16, 12, 0, 0]);
-
-   /* Formatting */
-   time.formatJalali("y-m-d h:i:s");
-   time.formatGregorian("y-m-d h:i:s");
-</script>
+      /* HTMLify */
+      time.htmlify("target", {
+         format: "jalali",
+         yearName: "year",
+         monthName: "month",
+         dayName: "day",
+         hoursName: "hours",
+         minutesName: "minutes"
+      });
+   </script>
+</body>
+</html>

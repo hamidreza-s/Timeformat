@@ -21,19 +21,19 @@
           */
          g_to_j: function(g){
             if(!g) return undefined;
-            var gy, gm, gd;
+            var gy, gm, gd, gh, gi, gs;
             var jy, jm, jd;
             var g_day_no, j_day_no;
             var j_np;
 
             var i;
 
-            gy = g[0]-1600;
-            gm = g[1]-1;
-            gd = g[2]-1;
-            gh = g[3];
-            gi = g[4];
-            gs = g[5];
+            gy = g['year']-1600;
+            gm = g['month']-1;
+            gd = g['day']-1;
+            gh = g['hours'];
+            gi = g['minutes'];
+            gs = g['seconds'];
 
             g_day_no = 365*gy+this.div((gy+3),4)-this.div((gy+99),100)+this.div((gy+399),400);
             for (i=0;i<gm;++i)
@@ -63,7 +63,7 @@
             jm = i+1;
             jd = j_day_no+1;
 
-            return new Array(jy, jm, jd, gh, gi, gs);
+            return {year: jy, month: jm, day: jd, hours: gh, minutes: gi, seconds: gs};
          },
 
          /**
@@ -72,18 +72,18 @@
          j_to_g: function(j){
             if(!j) return undefined;
             var gy, gm, gd;
-            var jy, jm, jd;
+            var jy, jm, jd, jh, ji, js;
             var g_day_no, j_day_no;
             var leap;
 
             var i;
 
-            jy = j[0]-979;
-            jm = j[1]-1;
-            jd = j[2]-1;
-            jh = j[3];
-            ji = j[4];
-            js = j[5];
+            jy = j['year']-979;
+            jm = j['month']-1;
+            jd = j['day']-1;
+            jh = j['hours'];
+            ji = j['minutes'];
+            js = j['seconds'];
 
             j_day_no = 365*jy + this.div(jy,33)*8 + this.div((this.reminder (jy, 33)+3),4);
             for (i=0; i < jm; ++i)
@@ -126,21 +126,27 @@
             gm = i+1;
             gd = g_day_no+1;
 
-            return new Array(gy, gm, gd, jh, ji, js);
+            return {year: gy, month: gm, day: gd, hours: jh, minutes: ji, seconds: js};
          },
 
          jalali_today: function(){
             Today = new Date();
-            j = this.g_to_j(new Array(
-               Today.getFullYear(),
-               Today.getMonth()+1,
-               Today.getDate(),
-               Today.getHours(),
-               Today.getMinutes(),
-               Today.getSeconds()
-            ));
+            j = this.g_to_j({
+               year: Today.getFullYear(),
+               month: Today.getMonth()+1,
+               day: Today.getDate(),
+               hours: Today.getHours(),
+               minutes: Today.getMinutes(),
+               seconds: Today.getSeconds()
+            });
             
-            return j[2]+"/"+j[1]+"/"+j[0]+" "+j[3]+":"+j[4]+":"+j[5];
+            return 
+               j['year'] + "/" +
+               j['month'] + "/" +
+               j['day'] + " " +
+               j['hours'] + ":" + 
+               j['minutes'] + ":" +
+               j['seconds'];
          },
 
          /**
@@ -150,12 +156,13 @@
             if(!g) return undefined;
             var 
                f = new Date(),
-               y = g[0],
-               m = g[1],
-               d = g[2],
-               h = g[3],
-               i = g[4],
-               s = g[5];
+               y = g['year'],
+               m = g['month'],
+               d = g['day'],
+               h = g['hours'],
+               i = g['minutes'],
+               s = g['seconds']
+            ;
 
             f.setYear(y);
             f.setMonth(m - 1);
@@ -182,14 +189,14 @@
          t_to_j: function(t){
            if(!t) return undefined;
            var f = new Date(parseInt(t));
-           return this.g_to_j([
-            f.getFullYear(), 
-            (f.getMonth() + 1), 
-            f.getDate(),
-            f.getHours(),
-            f.getMinutes(),
-            f.getSeconds()
-           ]);
+           return this.g_to_j({
+            year: f.getFullYear(), 
+            month: (f.getMonth() + 1), 
+            day: f.getDate(),
+            hours: f.getHours(),
+            minutes: f.getMinutes(),
+            seconds: f.getSeconds()
+           });
          },
 
          /**
@@ -198,14 +205,14 @@
          t_to_g: function(t){
            if(!t) return undefined;
            var f = new Date(parseInt(t));
-           return [
-            f.getFullYear(), 
-            (f.getMonth() + 1), 
-            f.getDate(),
-            f.getHours(),
-            f.getMinutes(),
-            f.getSeconds()
-           ];
+           return {
+            year: f.getFullYear(), 
+            month: (f.getMonth() + 1), 
+            day: f.getDate(),
+            hours: f.getHours(),
+            minutes: f.getMinutes(),
+            seconds: f.getSeconds()
+           };
          }
       }
 
@@ -215,6 +222,13 @@
             miliseconds: false
          };
          options = options || {},
+         currentT = (new Date).getTime(),
+         currentJ = timeConvertor.t_to_j(currentT),
+         currentG = timeConvertor.t_to_g(currentT),
+         sections = [
+            'year', 'month', 'day',
+            'hours', 'minutes', 'seconds'
+         ],
          zero = {
             year: 0, month: 0, day: 0,
             hours: 0, minutes: 0, seconds: 0,
@@ -224,7 +238,8 @@
             year: 31104000, month: 2592000, day: 86400,
             hours: 3600, minutes: 60, seconds: 1,
             timestamp: 1
-         };
+         }
+      ;
 
       var extend = function(source, target){
          var result = {};
@@ -243,8 +258,8 @@
       };
 
       if(options.timestamp) timestamp = options.timestamp;
-      else if(options.jalali) timestamp = timeConvertor.j_to_t(options.jalali);
-      else if(options.gregorian) timestamp = timeConvertor.g_to_t(options.gregorian);
+      else if(options.jalali) timestamp = timeConvertor.j_to_t(extend(currentJ, options.jalali));
+      else if(options.gregorian) timestamp = timeConvertor.g_to_t(extend(currentG, options.gregorian));
       else timestamp = (new Date).getTime();
 
       defaults = extend(defaults, options);
@@ -256,60 +271,28 @@
         return parseInt((this.getTime() / 1000).toFixed());
       };
 
-      date.toJalali = function(){
-         return timeConvertor.t_to_j(this.getTime());
+      date.to = function(format, section){
+         switch(format){
+            case 'jalali':
+               if(!section) return timeConvertor.t_to_j(this.getTime());
+               if(sections.indexOf(section) == -1) return undefined;
+               return timeConvertor.t_to_j(this.getTime())[section];
+               break;
+            case 'gregorian':
+               if(!section) return timeConvertor.t_to_g(this.getTime());
+               if(sections.indexOf(section) == -1) return undefined;
+               return timeConvertor.t_to_g(this.getTime())[section];
+               break;
+            default: return undefined;
+         }
       };
 
-      date.toGregorian = function(){
-         return timeConvertor.t_to_g(this.getTime());
-      };
-
-      date.toJalaliYear = function(){
-         return this.toJalali()[0];
+      date.toJalali = function(section){
+         return this.to('jalali', section);
       }
 
-      date.toJalaliMonth = function(){
-         return this.toJalali()[1];
-      }
-
-      date.toJalaliDay = function(){
-         return this.toJalali()[2];
-      }
-
-      date.toJalaliHours = function(){
-         return this.toJalali()[3];
-      }
-
-      date.toJalaliMinutes = function(){
-         return this.toJalali()[4];
-      }
-
-      date.toJalaliSeconds = function(){
-         return this.toJalali()[5];
-      }
-
-      date.toGregorianYear = function(){
-         return this.toGregorian()[0];
-      }
-
-      date.toGregorianMonth = function(){
-         return this.toGregorian()[1];
-      }
-
-      date.toGregorianDay = function(){
-         return this.toGregorian()[2];
-      }
-
-      date.toGregorianHours = function(){
-         return this.toGregorian()[3];
-      }
-
-      date.toGregorianMinutes = function(){
-         return this.toGregorian()[4];
-      }
-
-      date.toGregorianSeconds = function(){
-         return this.toGregorian()[5];
+      date.toGregorian = function(section){
+         return this.to('gregorian', section);
       }
 
       date.fromTimestamp = function(timestamp){
@@ -318,13 +301,13 @@
          return this;
       };
 
-      date.fromJalali = function(array){
-         this.setTime(timeConvertor.j_to_t(array));
+      date.fromJalali = function(object){
+         this.setTime(timeConvertor.j_to_t(object));
          return this;
       };
 
-      date.fromGregorian = function(array){
-         this.setTime(timeConvertor.g_to_j(array));
+      date.fromGregorian = function(object){
+         this.setTime(timeConvertor.g_to_j(object));
          return this;
       };
 
@@ -344,29 +327,84 @@
 
       date.formatJalali = function(format){
          return format
-            .replace("y", this.toJalaliYear())
-            .replace("m", this.toJalaliMonth())
-            .replace("d", this.toJalaliDay())
-            .replace("h", this.toJalaliHours())
-            .replace("i", this.toJalaliMinutes())
-            .replace("s", this.toJalaliSeconds())
+            .replace("y", this.toJalali('year'))
+            .replace("m", this.toJalali('month'))
+            .replace("d", this.toJalali('day'))
+            .replace("h", this.toJalali('hours'))
+            .replace("i", this.toJalali('minutes'))
+            .replace("s", this.toJalali('seconds'))
          ;
       };
 
       date.formatGregorian = function(format){
          return format
-            .replace("y", this.toGregorianYear())
-            .replace("m", this.toGregorianMonth())
-            .replace("d", this.toGregorianDay())
-            .replace("h", this.toGregorianHours())
-            .replace("i", this.toGregorianMinutes())
-            .replace("s", this.toGregorianSeconds())
+            .replace("y", this.toGregorian('year'))
+            .replace("m", this.toGregorian('month'))
+            .replace("d", this.toGregorian('day'))
+            .replace("h", this.toGregorian('hours'))
+            .replace("i", this.toGregorian('minutes'))
+            .replace("s", this.toGregorian('seconds'))
          ;
       };
 
       date.toString = function(){
          if(defaults.miliseconds) return "Timestamp " + this.getTime();
          return "Timestamp: " + (this.getTime() / 1000).toFixed();
+      }
+
+      date.htmlify = function(selector, options){
+         var defaults = extend({
+            format: "jalali",
+            hours: false,
+            yearName: "year",
+            monthName: "month",
+            dayName: "day",
+            hoursName: "hours",
+            minutesName: "minutes",
+         }, options);
+
+         console.log(defaults);
+
+         var yearEl = document.createElement("input");
+         yearEl.name = defaults.yearName;
+         yearEl.type = "text";
+         yearEl.placeholder = "Year";
+         yearEl.value = this.to(defaults.format, 'year');
+
+         var monthEl = document.createElement("input");
+         monthEl.name = defaults.monthName;
+         monthEl.type = "text";
+         monthEl.placeholder = "Month";
+         monthEl.value = this.to(defaults.format, 'month');
+         
+         var dayEl = document.createElement("input");
+         dayEl.name = defaults.dayName;
+         dayEl.type = "text";
+         dayEl.placeholder = "Day";
+         dayEl.value = this.to(defaults.format, 'day');
+
+         if(defaults.hours){
+            var hoursEl = document.createElement("input");
+            hoursEl.name = defaults.dayName;
+            hoursEl.type = "text";
+            hoursEl.placeholder = "Hours";
+            hoursEl.value = this.to(defaults.format, 'hours');
+
+            var minutesEl = document.createElement("input");
+            minutesEl.name = defaults.dayName;
+            minutesEl.type = "text";
+            minutesEl.placeholder = "Minutes";
+            minutesEl.value = this.to(defaults.format, 'minutes');
+         }
+
+         var place = document.getElementById(selector);
+         place.appendChild(yearEl);
+         place.appendChild(monthEl);
+         place.appendChild(dayEl);
+         if(defaults.hours){
+            place.appendChild(hoursEl);
+            place.appendChild(minutesEl);
+         }
       }
 
       return date;

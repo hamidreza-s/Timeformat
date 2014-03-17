@@ -47,28 +47,31 @@ var options = {
 }
 ```
 
+### HTMLify
+```javascript
+time.htmlify("target");
+time.htmlify("target", {
+   format: "jalali",
+   yearName: "year",
+   monthName: "month",
+   dayName: "day",
+   hoursName: "hours",
+   minutesName: "minutes"
+});
+```
+
 ## APIs
 
+- to(format, section)
 - toTimestamp()
-- toJalali()
-- toGregorian()
-- toJalaliYear()
-- toJalaliMonth()
-- toJalaliDay()
-- toJalaliHours()
-- toJalaliMinutes()
-- toJalaliSeconds()
-- toGregorianYear()
-- toGregorianMonth()
-- toGregorianDay()
-- toGregorianHours()
-- toGregorianMinutes()
-- toGregorianSeconds()
+- toJalali(section)
+- toGregorian(section)
 - fromTimestamp(integer)
-- fromJalali(array)
-- fromGregorian(array)
+- fromJalali(object)
+- fromGregorian(object)
 - formatJalali(string)
 - formatGregorian(string)
 - toString()
 - increment()
 - decrement()
+- htmlify(target, options)
