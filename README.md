@@ -28,6 +28,12 @@ time.formatJalali("y-m-d h:i:s");
 time.formatGregorian("y-m-d h:i:s");
 ```
 
+### Incrementing & Decrementing
+```javascript
+time.increment({month: 1, hours: 20});
+time.decrement({day: 30, hours: 12});
+```
+
 ### Options
 **timestamp** key has precedence over **jalali** and **gregorian**.
 And also **jalali** key has precedence over **gregorian**.
@@ -64,3 +70,5 @@ var options = {
 - formatJalali(string)
 - formatGregorian(string)
 - toString()
+- increment()
+- decrement()
