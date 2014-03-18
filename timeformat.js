@@ -238,7 +238,8 @@
             year: 31104000, month: 2592000, day: 86400,
             hours: 3600, minutes: 60, seconds: 1,
             timestamp: 1
-         }
+         },
+         targets = []
       ;
 
       var extend = function(source, target){
@@ -283,9 +284,31 @@
                if(sections.indexOf(section) == -1) return undefined;
                return timeConvertor.t_to_g(this.getTime())[section];
                break;
-            default: return undefined;
          }
+         return this;
       };
+
+      date.from = function(format, section){
+         switch(format){
+            case 'jalali':
+               this.setTime(timeConvertor.j_to_t(extend(
+                  this.to(format), 
+                  section
+               )));
+               break;
+            case 'gregorian':
+               this.setTime(timeConvertor.g_to_t(extend(
+                  this.to(format),
+                  section
+               )));
+               break;
+         }
+
+         var event = new Event('new.timestamp');
+         for(var i in targets){ targets[i].dispatchEvent(event); }
+         
+         return this;
+      }
 
       date.toJalali = function(section){
          return this.to('jalali', section);
@@ -302,12 +325,12 @@
       };
 
       date.fromJalali = function(object){
-         this.setTime(timeConvertor.j_to_t(object));
+         this.from('jalali', object);
          return this;
       };
 
       date.fromGregorian = function(object){
-         this.setTime(timeConvertor.g_to_j(object));
+         this.from('gregorian', object);
          return this;
       };
 
@@ -352,59 +375,106 @@
          return "Timestamp: " + (this.getTime() / 1000).toFixed();
       }
 
-      date.htmlify = function(selector, options){
+      date.html = function(selector, options){
+         var self = this;
+         var options = options || {};
          var defaults = extend({
             format: "jalali",
-            hours: false,
-            yearName: "year",
-            monthName: "month",
-            dayName: "day",
-            hoursName: "hours",
-            minutesName: "minutes",
+            year: {name: "year", cssClass: ""},
+            month: {name: "month", cssClass: ""},
+            day: {name: "day", cssClass: ""},
+            hours: {name: "hours", cssClass: ""},
+            minutes: {name: "minutes", cssClass: ""},
          }, options);
 
-         console.log(defaults);
+         var place = document.getElementById(selector);
+         targets.push(place);
+         place.addEventListener("new.timestamp", function(event){
+            for(var i in place.childNodes){
+               if(typeof place.childNodes[i] != "object") continue;
+               place.childNodes[i].value = self.to(
+                  defaults.format, 
+                  place.childNodes[i].getAttribute('timeformat')
+               );
+            }
+         });
 
-         var yearEl = document.createElement("input");
-         yearEl.name = defaults.yearName;
-         yearEl.type = "text";
-         yearEl.placeholder = "Year";
-         yearEl.value = this.to(defaults.format, 'year');
+         if(options.year){
+            var yearEl = document.createElement("input");
+            yearEl.setAttribute('timeformat', 'year');
+            yearEl.name = defaults.year.name;
+            yearEl.type = "text";
+            yearEl.placeholder = "Year";
+            yearEl.className = defaults.year.cssClass;
+            yearEl.value = self.to(defaults.format, 'year');
+            yearEl.addEventListener("change", function(event){
+               self.from(defaults.format, {year: yearEl.value});
+            });
+            place.appendChild(yearEl);
+         }
 
-         var monthEl = document.createElement("input");
-         monthEl.name = defaults.monthName;
-         monthEl.type = "text";
-         monthEl.placeholder = "Month";
-         monthEl.value = this.to(defaults.format, 'month');
+         if(options.month){
+            var monthEl = document.createElement("select");
+            monthEl.setAttribute('timeformat', 'month');
+            monthEl.name = defaults.month.name;
+            monthEl.className = defaults.month.cssClass;
+            var optionsEl = [];
+            for(var i = 1; i <= 12; i++){
+               optionsEl[i] = document.createElement("option");
+               optionsEl[i].textContent = optionsEl[i].value = i;
+               monthEl.appendChild(optionsEl[i]);
+            }
+            var selected = self.to(defaults.format, 'month') - 1;
+            monthEl.getElementsByTagName("option")[selected].selected = "selected";
+            monthEl.addEventListener("change", function(event){
+               self.from(defaults.format, {month: monthEl.value});
+            });
+            place.appendChild(monthEl);
+         }
          
-         var dayEl = document.createElement("input");
-         dayEl.name = defaults.dayName;
-         dayEl.type = "text";
-         dayEl.placeholder = "Day";
-         dayEl.value = this.to(defaults.format, 'day');
+         if(options.day){
+            var dayEl = document.createElement("input");
+            dayEl.setAttribute('timeformat', 'day');
+            dayEl.name = defaults.day.name;
+            dayEl.type = "text";
+            dayEl.placeholder = "Day";
+            dayEl.className = defaults.day.cssClass;
+            dayEl.value = self.to(defaults.format, 'day');
+            dayEl.addEventListener("change", function(event){
+               self.from(defaults.format, {day: dayEl.value});
+            });
+            place.appendChild(dayEl);
+         }
 
-         if(defaults.hours){
+         if(options.hours){
             var hoursEl = document.createElement("input");
-            hoursEl.name = defaults.dayName;
+            hoursEl.setAttribute('timeformat', 'hours');
+            hoursEl.name = defaults.hours.name;
             hoursEl.type = "text";
             hoursEl.placeholder = "Hours";
-            hoursEl.value = this.to(defaults.format, 'hours');
+            hoursEl.className = defaults.hours.cssClass;
+            hoursEl.value = self.to(defaults.format, 'hours');
+            hoursEl.addEventListener("change", function(event){
+               self.from(defaults.format, {hours: hoursEl.value});
+            });
+            place.appendChild(hoursEl);
+         }
 
+         if(options.minutes){
             var minutesEl = document.createElement("input");
-            minutesEl.name = defaults.dayName;
+            minutesEl.setAttribute('timeformat', 'minutes');
+            minutesEl.name = defaults.minutes.name;
             minutesEl.type = "text";
             minutesEl.placeholder = "Minutes";
-            minutesEl.value = this.to(defaults.format, 'minutes');
-         }
-
-         var place = document.getElementById(selector);
-         place.appendChild(yearEl);
-         place.appendChild(monthEl);
-         place.appendChild(dayEl);
-         if(defaults.hours){
-            place.appendChild(hoursEl);
+            minutesEl.className = defaults.minutes.cssClass;
+            minutesEl.value = self.to(defaults.format, 'minutes');
+            minutesEl.addEventListener("change", function(event){
+               self.from(defaults.format, {minutes: minutesEl.value});
+            });
             place.appendChild(minutesEl);
          }
+
+         return self;
       }
 
       return date;

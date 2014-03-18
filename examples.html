@@ -1,15 +1,24 @@
 <html>
 <head>
    <script src="./timeformat.js" type="text/javascript"></script>
+   <style>
+      .date { margin: 3px; }
+      .year { width: 50px; }
+      .month { width: 50px; }
+      .day { width: 50px; }
+      .hours { width: 78px; }
+      .minutes { width: 78px; }
+   </style>
 <head>
 <body>
-   <span id="target"></span>
+   <div id="date-target"></div>
+   <div id="time-target"></div>
    <script type="text/javascript">
 
       /* Initializing examples */
-      var time = new Timestamp({jalali: {
+      var timeformat = new Timestamp({jalali: {
          year: 1392, 
-         month: 12, 
+         month: 11, 
          day: 25, 
          hours: 12, 
          minutes: 0, 
@@ -17,14 +26,18 @@
       }});
 
       /* HTMLify */
-      time.htmlify("target", {
+      timeformat.html("date-target", {
          format: "jalali",
-         yearName: "year",
-         monthName: "month",
-         dayName: "day",
-         hoursName: "hours",
-         minutesName: "minutes"
+         year: {name: "iyear", cssClass: "date year"},
+         month: {name: "month", cssClass: "date month"},
+         day: {name: "day", cssClass: "date day"},
       });
+
+      timeformat.html("time-target", {
+         hours: {name: "hours", cssClass: "date hours"},
+         minutes: {name: "minutes", cssClass: "date minutes"}
+      });
+
    </script>
 </body>
 </html>
