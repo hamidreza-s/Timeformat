@@ -73,8 +73,8 @@ time.fromGregorian({day: 4, hours: 3});
 
 ### Formatting
 ```javascript
-time.formatJalali("y-m-d h:i:s");
-time.formatGregorian("y-m-d h:i:s");
+time.formatJalali("{{y}}-{{m}}-{{d}} {{h}}:{{i}}:{{s}}");
+time.formatGregorian("{{y}}-{{m}}-{{d}} {{h}}:{{i}}:{{s}}");
 ```
 
 ### Incrementing & Decrementing
