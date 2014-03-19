@@ -1,7 +1,11 @@
 # TimeFormat.js
 Utility for formatting timestamp to Gregorian or Jalali date.
 
+## Requirements
+Nothing.
+
 ## Usage
+
 
 ### Initializing
 ```javascript
@@ -9,29 +13,62 @@ var time = new Timeformat();
 var time = new Timeformat(options);
 var time = new Timeformat({timestamp: 1394961512});
 var time = new Timeformat({timestamp: 1394961512136, miliseconds: true});
-var time = new Timeformat({jalali: [1392, 12, 25, 12, 0, 0]});
-var time = new Timeformat({gregorian: [2014, 3, 16, 12, 0, 0]});
+var time = new Timeformat({jalali: {year: 1392, month: 12, day: 25, minutes: 12}});
+var time = new Timeformat({gregorian: {year: 2014, month: 3, day: 16}});
 ```
 
-### Constructor Options
-**timestamp** key has precedence over **jalali** and **gregorian**.
+### Constructing
+The **timestamp** key has precedence over **jalali** and **gregorian**.
 And also **jalali** key has precedence over **gregorian**.
 
 ```javascript
 var options = {
    miliseconds: true | false,
    timestamp: timestamp,
-   jalali: [year, month, day, hours, minutes, seconds],
-   gregorian: [year, month, day, hours, minutes, seconds]
+   jalali: {
+      year: int, 
+      month: int, 
+      day: int, 
+      hours: int, 
+      minutes: int, 
+      seconds: int
+   },
+   gregorian: {
+      year: int, 
+      month: int, 
+      day: int, 
+      hours: int, 
+      minutes: int, 
+      seconds: int
+   }
 }
-var timestamp = new Timeformat(options);
+var timeformat = new Timeformat(options);
+```
+**Note:** Default time for each key is current time.
+
+### Accessing
+```javascript
+time.toTimestamp();
+
+time.to('jalali' /* all sections */);
+time.to('jalali', 'year');
+time.toJalali('year');
+
+time.to('gregorian' /* all sections */);
+time.to('gregorian', 'month');
+time.toGregorian('month');
+
 ```
 
 ### Updating
 ```javascript
-time.fromTimestamp(1394961512)
-time.fromJalali([1392, 12, 25, 12, 0, 0]);
-time.fromGregorian([2014, 3, 16, 12, 0, 0]);
+time.fromTimestamp(1394961512);
+
+time.from('jalali', {year: 1392, month: 12});
+time.fromJalali({year: 1392, month: 12});
+
+time.from('gregorian', {day: 4, hours: 3});
+time.fromGregorian({day: 4, hours: 3});
 ```
 
 ### Formatting
@@ -64,7 +101,7 @@ time.html("#target-time", {
 ```
 **Note:** There is a `live binding` between *HTML elements* and *timestamp object*. Changing each of them applies to one onether.
 
-## APIs
+## API List
 - to(format, section)
 - toTimestamp()
 - toJalali(section)

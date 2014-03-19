@@ -144,7 +144,7 @@
                j['year'] + "/" +
                j['month'] + "/" +
                j['day'] + " " +
-               j['hours'] + ":" + 
+               j['hours'] + ":" +
                j['minutes'] + ":" +
                j['seconds'];
          },
@@ -190,8 +190,8 @@
            if(!t) return undefined;
            var f = new Date(parseInt(t));
            return this.g_to_j({
-            year: f.getFullYear(), 
-            month: (f.getMonth() + 1), 
+            year: f.getFullYear(),
+            month: (f.getMonth() + 1),
             day: f.getDate(),
             hours: f.getHours(),
             minutes: f.getMinutes(),
@@ -353,23 +353,23 @@
 
       date.formatJalali = function(format){
          return format
-            .replace("y", this.toJalali('year'))
-            .replace("m", this.toJalali('month'))
-            .replace("d", this.toJalali('day'))
-            .replace("h", this.toJalali('hours'))
-            .replace("i", this.toJalali('minutes'))
-            .replace("s", this.toJalali('seconds'))
+            .replace("{{y}}", this.toJalali('year'))
+            .replace("{{m}}", this.toJalali('month'))
+            .replace("{{d}}", this.toJalali('day'))
+            .replace("{{h}}", this.toJalali('hours'))
+            .replace("{{i}}", this.toJalali('minutes'))
+            .replace("{{s}}", this.toJalali('seconds'))
          ;
       };
 
       date.formatGregorian = function(format){
          return format
-            .replace("y", this.toGregorian('year'))
-            .replace("m", this.toGregorian('month'))
-            .replace("d", this.toGregorian('day'))
-            .replace("h", this.toGregorian('hours'))
-            .replace("i", this.toGregorian('minutes'))
-            .replace("s", this.toGregorian('seconds'))
+            .replace("{{y}}", this.toGregorian('year'))
+            .replace("{{m}}", this.toGregorian('month'))
+            .replace("{{d}}", this.toGregorian('day'))
+            .replace("{{h}}", this.toGregorian('hours'))
+            .replace("{{i}}", this.toGregorian('minutes'))
+            .replace("{{s}}", this.toGregorian('seconds'))
          ;
       };
 
