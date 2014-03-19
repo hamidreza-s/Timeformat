@@ -1,6 +1,6 @@
 ;(function(){
 
-   function Timestamp(options){
+   function Timeformat(options){
 
       var timeConvertor = {
          
@@ -258,6 +258,11 @@
          return result;
       };
 
+      var emitChange = function(){
+         var event = new Event('new.timestamp');
+         for(var i in targets){ targets[i].dispatchEvent(event); }
+      };
+
       if(options.timestamp) timestamp = options.timestamp;
       else if(options.jalali) timestamp = timeConvertor.j_to_t(extend(currentJ, options.jalali));
       else if(options.gregorian) timestamp = timeConvertor.g_to_t(extend(currentG, options.gregorian));
@@ -303,10 +308,7 @@
                )));
                break;
          }
-
-         var event = new Event('new.timestamp');
-         for(var i in targets){ targets[i].dispatchEvent(event); }
-         
+         emitChange();         
          return this;
       }
 
@@ -320,7 +322,8 @@
 
       date.fromTimestamp = function(timestamp){
          if(defaults.miliseconds) this.setTime(timestamp);
-         else this.setTime(timestamp * 1000)
+         else this.setTime(timestamp * 1000);
+         emitChange();
          return this;
       };
 
@@ -387,7 +390,7 @@
             minutes: {name: "minutes", cssClass: ""},
          }, options);
 
-         var place = document.getElementById(selector);
+         var place = document.getElementById(selector.replace("#",""));
          targets.push(place);
          place.addEventListener("new.timestamp", function(event){
             for(var i in place.childNodes){
@@ -480,6 +483,6 @@
       return date;
    };
 
-   window.Timestamp = Timestamp;
+   window.Timeformat = Timeformat;
 
 })();

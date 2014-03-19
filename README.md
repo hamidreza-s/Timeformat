@@ -5,12 +5,12 @@ Utility for formatting timestamp to Gregorian or Jalali date.
 
 ### Initializing
 ```javascript
-var time = new Timestamp();
-var time = new Timestamp(options);
-var time = new Timestamp({timestamp: 1394961512});
-var time = new Timestamp({timestamp: 1394961512136, miliseconds: true});
-var time = new Timestamp({jalali: [1392, 12, 25, 12, 0, 0]});
-var time = new timestamp({gregorian: [2014, 3, 16, 12, 0, 0]});
+var time = new Timeformat();
+var time = new Timeformat(options);
+var time = new Timeformat({timestamp: 1394961512});
+var time = new Timeformat({timestamp: 1394961512136, miliseconds: true});
+var time = new Timeformat({jalali: [1392, 12, 25, 12, 0, 0]});
+var time = new Timeformat({gregorian: [2014, 3, 16, 12, 0, 0]});
 ```
 
 ### Constructor Options
@@ -24,7 +24,7 @@ var options = {
    jalali: [year, month, day, hours, minutes, seconds],
    gregorian: [year, month, day, hours, minutes, seconds]
 }
-var timestamp = new Timestamp(options);
+var timestamp = new Timeformat(options);
 ```
 
 ### Updating
@@ -48,19 +48,21 @@ time.decrement({day: 30, hours: 12});
 
 ### HTMLify
 ```javascript
-time.html("target-all");
-time.html("target-date", {
+time.html("#target-all");
+
+time.html("#target-date", {
    format: "jalali",
    year: {name: "year", cssClass: "date"},
    month: {name: "month", cssClass: "date"},
    day: {name: "day", cssClass: "date"}
 });
-time.html("target-time", {
+
+time.html("#target-time", {
    hours: {name: "hours", cssClass: "date"},
    minutes: {name: "minutes", cssClass: "date"}
 });
 ```
-**Note:** There is a`live binding` between *HTML elements* and *timestamp object*. Changing each of them applies to one onether.
+**Note:** There is a `live binding` between *HTML elements* and *timestamp object*. Changing each of them applies to one onether.
 
 ## APIs
 - to(format, section)
@@ -73,7 +75,7 @@ time.html("target-time", {
 - fromGregorian(object)
 - formatJalali(string)
 - formatGregorian(string)
+- html(target, options)
 - toString()
 - increment()
 - decrement()
-- html(target, options)
