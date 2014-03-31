@@ -263,7 +263,7 @@
          for(var i in targets){ targets[i].dispatchEvent(event); }
       };
 
-      if(options.timestamp) timestamp = options.timestamp;
+      if(options.timestamp) timestamp = options.timestamp * 1000;
       else if(options.jalali) timestamp = timeConvertor.j_to_t(extend(currentJ, options.jalali));
       else if(options.gregorian) timestamp = timeConvertor.g_to_t(extend(currentG, options.gregorian));
       else timestamp = (new Date).getTime();
